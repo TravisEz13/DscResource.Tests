@@ -87,7 +87,7 @@ function Start-AppveyorTestScriptTask
     [CmdletBinding(DefaultParametersetName = 'Default')]
     param
     (
-        [ParameterSet('Default','Harness')]
+        [ValidateSet('Default','Harness')]
         [String]
         $Type = 'Default',
 
@@ -198,7 +198,7 @@ function Start-AppveyorAfterTestTask
     [CmdletBinding(DefaultParametersetName = 'Default')]
     param
     (
-        [ParameterSet('Default','Wiki')]
+        [ValidateSet('Default','Wiki')]
         [String]
         $Type = 'Default',
 
