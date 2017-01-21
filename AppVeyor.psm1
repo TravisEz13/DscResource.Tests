@@ -87,13 +87,17 @@ function Start-AppveyorTestScriptTask
     [CmdletBinding(DefaultParametersetName = 'Default')]
     param
     (
-        [ValidateSet('Default','CodeCoverage','Harness')]
+        [ValidateSet('Default','Harness')]
         [String]
         $Type = 'Default',
 
         [ValidateNotNullOrEmpty()]
         [String]
         $MainModulePath = $env:APPVEYOR_BUILD_FOLDER,
+
+        [Parameter(ParameterSetName = 'Default)]
+        [Switch]
+        $CodeCoverage,
 
         [Parameter(ParameterSetName = 'Harness',
                    Mandatory = $true)]
@@ -130,22 +134,22 @@ function Start-AppveyorTestScriptTask
         'Default'
         {
             # Execute the standard tests using Pester.
-            $result = Invoke-Pester -OutputFormat NUnitXml `
-                                    -OutputFile $testResultsFile `
-                                    -PassThru
-            break
-        }
-        'CodeCoverage'
-        {
-            # Execute the standard tests including CodeCoverage using Pester.
-            Write-Warning -Message 'Code coverage statistics are being calculated. This will slow the start of the tests while the code matrix is built. Please be patient.'
-            $result = Invoke-Pester -OutputFormat NUnitXml `
-                                    -OutputFile $testResultsFile `
-                                    -PassThru `
-                                    -CodeCoverage @(
-                                        "$env:APPVEYOR_BUILD_FOLDER\*.psm1"
-                                        "$env:APPVEYOR_BUILD_FOLDER\DSCResources\**\*.psm1"
-                                    )
+            $pesterParameters = @{
+                OutputFormat = 'NUnitXML'
+                OutputFile   = $testResultsFile
+                PassThru     = $True
+            }
+            if ($CodeCoverage)
+            {
+                Write-Warning -Message 'Code coverage statistics are being calculated. This will slow the start of the tests while the code matrix is built. Please be patient.'
+                $pesterParameters += @{
+                    CodeCoverage = @(
+                        "$env:APPVEYOR_BUILD_FOLDER\*.psm1"
+                        "$env:APPVEYOR_BUILD_FOLDER\DSCResources\**\*.psm1"
+                    )
+                }
+            }
+            $result = Invoke-Pester @pesterParameters
             break
         }
         'Harness'
