@@ -116,7 +116,7 @@ function Start-AppveyorTestScriptTask
     $testResultsFile = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                  -ChildPath 'TestsResults.xml'
 
-    switch ($PsCmdlet.ParameterSetName)
+    switch ($Type)
     {
         'Default'
         {
@@ -234,7 +234,7 @@ function Start-AppveyorAfterTestTask
     # Import so we can create zip files
     Add-Type -assemblyname System.IO.Compression.FileSystem
 
-    if ($PsCmdlet.ParameterSetName -eq 'Wiki')
+    if ($Type -eq 'Wiki')
     {
         # Write the PowerShell help files
         $docoPath = Join-Path -Path $MainModuleFolder `
