@@ -91,8 +91,9 @@ function Start-AppveyorTestScriptTask
         [String]
         $Type = 'Default',
 
+        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = '',
+        $MainModulePath,
 
         [Parameter(ParameterSetName = 'Harness',
                    Mandatory = $true)]
@@ -106,7 +107,11 @@ function Start-AppveyorTestScriptTask
     )
 
     # Convert the Main Module path into an absolute path if it is relative
-    if (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
+    if ([String]::IsNullOrEmpty($MainModulePath)
+    {
+        $MainModulePath = $env:APPVEYOR_BUILD_FOLDER
+    }
+    elseif (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
     {
         $MainModulePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                     -ChildPath $MainModulePath
@@ -209,8 +214,9 @@ function Start-AppveyorAfterTestTask
         [String]
         $Type = 'Default',
 
+        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = '',
+        $MainModulePath,
 
         [String]
         $ResourceModuleName = (($env:APPVEYOR_REPO_NAME -split '/')[1]),
@@ -223,7 +229,11 @@ function Start-AppveyorAfterTestTask
     )
 
     # Convert the Main Module path into an absolute path if it is relative
-    if (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
+    if ([String]::IsNullOrEmpty($MainModulePath)
+    {
+        $MainModulePath = $env:APPVEYOR_BUILD_FOLDER
+    }
+    elseif (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
     {
         $MainModulePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                     -ChildPath $MainModulePath
