@@ -137,7 +137,7 @@ function Start-AppveyorTestScriptTask
         }
         'CodeCoverage'
         {
-            # Execute the standard tests using Pester.
+            # Execute the standard tests including CodeCoverage using Pester.
             $result = Invoke-Pester -OutputFormat NUnitXml `
                                     -OutputFile $testResultsFile `
                                     -PassThru `
