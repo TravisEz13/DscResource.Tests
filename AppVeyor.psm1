@@ -292,15 +292,12 @@ function Start-AppveyorAfterTestTask
         Push-AppveyorArtifact $_.FullName -FileName $_.Name
     }
 
-    Push-Location
-    Set-Location -Path $MainModulePath
-
     # Create the Nuspec file for the Nuget Package in the Main Module Folder
     $nuspecPath = Join-Path -Path $MainModulePath `
                             -ChildPath "$ResourceModuleName.nuspec"
     $nuspecParams = @{
         packageName = $ResourceModuleName
-        destinationPath = $nuspecPath
+        destinationPath = $MainModulePath
         version = $env:APPVEYOR_BUILD_VERSION
         author = $Author
         owners = $Owners
@@ -314,7 +311,11 @@ function Start-AppveyorAfterTestTask
     # Create the Nuget Package
     $nugetExePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                               -ChildPath 'nuget.exe'
-    & $nugetExePath @('Pack',$nuspecPath,'-outputdirectory',$env:APPVEYOR_BUILD_FOLDER)
+    & $nugetExePath @(
+        'Pack',$nuspecPath
+        '-OutputDirectory',$env:APPVEYOR_BUILD_FOLDER
+        '-BasePath',$MainModulePath
+    )
 
     Write-Verbose -Verbose -Message ((Get-ChildItem -Path $env:APPVEYOR_BUILD_FOLDER -Filter '*.nupkg') | Out-String)
 
@@ -324,8 +325,6 @@ function Start-AppveyorAfterTestTask
     Get-ChildItem $nugetPackageName | ForEach-Object -Process {
         Push-AppveyorArtifact $_.FullName -FileName $_.Name
     }
-
-    Pop-Location
 
     # Execute custom after test task if defined
     if ($customTaskModuleLoaded `
