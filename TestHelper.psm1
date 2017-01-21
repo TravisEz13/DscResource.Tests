@@ -802,7 +802,7 @@ function Get-SuppressedPSSARuleNameList
     .PARAMETER OutFile
         The path to the download Nuget.exe to.
 
-    .PARAMETER URI
+    .PARAMETER Uri
         The URI to use to dowload Nuget.exe from.
 #>
 function Install-NugetExe
