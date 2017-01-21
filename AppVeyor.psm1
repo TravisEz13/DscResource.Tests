@@ -95,7 +95,7 @@ function Start-AppveyorTestScriptTask
         [String]
         $MainModulePath = $env:APPVEYOR_BUILD_FOLDER,
 
-        [Parameter(ParameterSetName = 'Default)]
+        [Parameter(ParameterSetName = 'Default')]
         [Switch]
         $CodeCoverage,
 
