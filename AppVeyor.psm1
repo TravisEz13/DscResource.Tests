@@ -44,7 +44,7 @@ function Start-AppveyorInstallTask
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 
     # Install Nuget.exe to enable package creation
-    $nugetExePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
+    $nugetExePath = Join-Path -Path $env:TEMP `
                               -ChildPath 'nuget.exe'
     Install-NugetExe -OutFile $nugetExePath
 
@@ -309,7 +309,7 @@ function Start-AppveyorAfterTestTask
     New-Nuspec @nuspecParams
 
     # Create the Nuget Package
-    $nugetExePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
+    $nugetExePath = Join-Path -Path $env:TEMP `
                               -ChildPath 'nuget.exe'
     Start-Process -FilePath $nugetExePath -Wait -ArgumentList @(
         'Pack',$nuspecPath
