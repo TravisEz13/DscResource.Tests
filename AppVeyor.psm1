@@ -231,9 +231,6 @@ function Start-AppveyorAfterTestTask
                                     -ChildPath $MainModulePath
     }
 
-    # Import so we can create zip files
-    Add-Type -assemblyname System.IO.Compression.FileSystem
-
     if ($Type -eq 'Wiki')
     {
         # Write the PowerShell help files
@@ -261,7 +258,8 @@ function Start-AppveyorAfterTestTask
 
         $zipFileName = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                  -ChildPath "$($ResourceModuleName)_$($env:APPVEYOR_BUILD_VERSION)_wikicontent.zip"
-        [System.IO.Compression.ZipFile]::CreateFromDirectory($wikiContentPath,$zipFileName)
+        Compress-Archive -Path (Join-Path -Path $wikiContentPath -ChildPath '*') `
+                         -DestinationPath $zipFileName
         Get-ChildItem -Path $zipFileName | ForEach-Object -Process {
             Push-AppveyorArtifact $_.FullName -FileName $_.Name
         }
@@ -283,7 +281,8 @@ function Start-AppveyorAfterTestTask
     # Zip and Publish the Main Module Folder content
     $zipFileName = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                              -ChildPath "$($ResourceModuleName)_$($env:APPVEYOR_BUILD_VERSION).zip"
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($MainModulePath, $zipFileName)
+    Compress-Archive -Path (Join-Path -Path $MainModulePath -ChildPath '*') `
+                     -DestinationPath $zipFileName
     New-DscChecksum -Path $env:APPVEYOR_BUILD_FOLDER -Outpath $env:APPVEYOR_BUILD_FOLDER
     Get-ChildItem -Path $zipFileName | ForEach-Object -Process {
         Push-AppveyorArtifact $_.FullName -FileName $_.Name
