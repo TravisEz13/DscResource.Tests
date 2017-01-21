@@ -91,9 +91,8 @@ function Start-AppveyorTestScriptTask
         [String]
         $Type = 'Default',
 
-        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = '\',
+        $MainModulePath = '',
 
         [Parameter(ParameterSetName = 'Harness',
                    Mandatory = $true)]
@@ -210,9 +209,8 @@ function Start-AppveyorAfterTestTask
         [String]
         $Type = 'Default',
 
-        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = '\',
+        $MainModulePath = '',
 
         [String]
         $ResourceModuleName = (($env:APPVEYOR_REPO_NAME -split '/')[1]),
