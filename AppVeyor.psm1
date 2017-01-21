@@ -131,11 +131,7 @@ function Start-AppveyorTestScriptTask
             # Copy the DSCResource.Tests folder into the folder containing the resource PSD1 file.
             $dscTestsPath = Join-Path -Path $MainModulePath `
                                       -ChildPath 'DSCResource.Tests'
-            Write-Verbose -Verbose -Message $PSScriptRoot
-            Write-Verbose -Verbose -Message $MainModulePath
-            Write-Verbose -Verbose -Message $dscTestsPath
-            Write-Verbose -Verbose -Message $HarnessModulePath
-            Copy-Item -Path $PSScriptRoot -Destination $MainModulePath
+            Copy-Item -Path $PSScriptRoot -Destination $MainModulePath -Recurse
             $testHarnessPath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                          -ChildPath $HarnessModulePath
 
