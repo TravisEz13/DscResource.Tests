@@ -87,7 +87,7 @@ function Start-AppveyorTestScriptTask
     [CmdletBinding(DefaultParametersetName = 'Default')]
     param
     (
-        [ValidateSet('Default','Harness')]
+        [ValidateSet('Default','CodeCoverage','Harness')]
         [String]
         $Type = 'Default',
 
@@ -116,6 +116,15 @@ function Start-AppveyorTestScriptTask
     $testResultsFile = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                  -ChildPath 'TestsResults.xml'
 
+    # Execute custom test task if defined
+    if ($customTaskModuleLoaded `
+        -and (Get-Command -Module $CustomAppVeyorTasks `
+                          -Name Start-CustomAppveyorTestTask `
+                          -ErrorAction SilentlyContinue))
+    {
+        Start-CustomAppveyorTestTask
+    }
+
     switch ($Type)
     {
         'Default'
@@ -124,6 +133,18 @@ function Start-AppveyorTestScriptTask
             $result = Invoke-Pester -OutputFormat NUnitXml `
                                     -OutputFile $testResultsFile `
                                     -PassThru
+            break
+        }
+        'CodeCoverage'
+        {
+            # Execute the standard tests using Pester.
+            $result = Invoke-Pester -OutputFormat NUnitXml `
+                                    -OutputFile $testResultsFile `
+                                    -PassThru `
+                                    -CodeCoverage @(
+                                        "$env:APPVEYOR_BUILD_FOLDER\*.psm1"
+                                        "$env:APPVEYOR_BUILD_FOLDER\DSCResources\**\*.psm1"
+                                    )
             break
         }
         'Harness'
@@ -144,15 +165,6 @@ function Start-AppveyorTestScriptTask
             Remove-Item -Path $dscTestsPath -Force -Recurse
             break
         }
-    }
-
-    # Execute custom test task if defined
-    if ($customTaskModuleLoaded `
-        -and (Get-Command -Module $CustomAppVeyorTasks `
-                          -Name Start-CustomAppveyorTestTask `
-                          -ErrorAction SilentlyContinue))
-    {
-        Start-CustomAppveyorTestTask
     }
 
     $webClient = New-Object -TypeName "System.Net.WebClient"
