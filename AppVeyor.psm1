@@ -157,7 +157,7 @@ function Start-AppveyorTestScriptTask
 
     $webClient = New-Object -TypeName "System.Net.WebClient"
     $webClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-                          $testResultsFilePath)
+                          $testResultsFile)
 
     if ($result.FailedCount -gt 0)
     {
@@ -273,8 +273,8 @@ function Start-AppveyorAfterTestTask
     }
 
     # Set the Module Version in the Manifest to the AppVeyor build version
-    $manifestPath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
-                              -ChildPath "$MainModulePath\$ResourceModuleName.psd1"
+    $manifestPath = Join-Path -Path $MainModulePath `
+                              -ChildPath "$ResourceModuleName.psd1"
     $manifestContent = Get-Content -Path $ManifestPath -Raw
     $regex = '(?<=ModuleVersion\s+=\s+'')(?<ModuleVersion>.*)(?='')'
     $manifestContent = $manifestContent -replace $regex,"ModuleVersion = '$env:APPVEYOR_BUILD_VERSION'"
@@ -319,7 +319,7 @@ function Start-AppveyorAfterTestTask
         $nuspecPath,
         "-outputdirectory $env:APPVEYOR_BUILD_FOLDER"
     )
-
+    Write-Verbose -Verbose -Message ((Get-ChildItem -Path $env:APPVEYOR_BUILD_FOLDER) | Out-String)
     # Push the Nuget Package up to AppVeyor
     $nugetPackageName = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                   -ChildPath "$ResourceModuleName.$($env:APPVEYOR_BUILD_VERSION).nupkg"
