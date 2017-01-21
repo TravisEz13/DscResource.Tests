@@ -107,7 +107,7 @@ function Start-AppveyorTestScriptTask
     )
 
     # Convert the Main Module path into an absolute path if it is relative
-    if ([String]::IsNullOrEmpty($MainModulePath)
+    if ([String]::IsNullOrEmpty($MainModulePath))
     {
         $MainModulePath = $env:APPVEYOR_BUILD_FOLDER
     }
@@ -229,7 +229,7 @@ function Start-AppveyorAfterTestTask
     )
 
     # Convert the Main Module path into an absolute path if it is relative
-    if ([String]::IsNullOrEmpty($MainModulePath)
+    if ([String]::IsNullOrEmpty($MainModulePath))
     {
         $MainModulePath = $env:APPVEYOR_BUILD_FOLDER
     }
