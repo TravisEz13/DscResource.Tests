@@ -73,7 +73,7 @@ function Start-AppveyorInstallTask
         leave empty to use default value 'Default'.
 
     .PARAMETER MainModulePath
-        This is the path of the folder that contains the module manifest.
+        This is the relative path of the folder that contains the module manifest.
         If not specified it will default to the root folder of the repository.
 
     .PARAMETER HarnessModulePath
@@ -91,8 +91,9 @@ function Start-AppveyorTestScriptTask
         [String]
         $Type = 'Default',
 
+        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = $env:APPVEYOR_BUILD_FOLDER,
+        $MainModulePath = '\',
 
         [Parameter(ParameterSetName = 'Harness',
                    Mandatory = $true)]
@@ -104,6 +105,13 @@ function Start-AppveyorTestScriptTask
         [String]
         $HarnessFunctionName
     )
+
+    # Convert the Main Module path into an absolute path if it is relative
+    if (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
+    {
+        $MainModulePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
+                                    -ChildPath $MainModulePath
+    }
 
     $testResultsFile = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                                  -ChildPath 'TestsResults.xml'
@@ -177,7 +185,7 @@ function Start-AppveyorTestScriptTask
         default value 'Default'.
 
     .PARAMETER MainModulePath
-        This is the path of the folder that contains the module manifest.
+        This is the relative path of the folder that contains the module manifest.
         If not specified it will default to the root folder of the repository.
 
     .PARAMETER ResourceModuleName
@@ -202,8 +210,9 @@ function Start-AppveyorAfterTestTask
         [String]
         $Type = 'Default',
 
+        [ValidateNotNullOrEmpty()]
         [String]
-        $MainModulePath = $env:APPVEYOR_BUILD_FOLDER,
+        $MainModulePath = '\',
 
         [String]
         $ResourceModuleName = (($env:APPVEYOR_REPO_NAME -split '/')[1]),
@@ -214,6 +223,13 @@ function Start-AppveyorAfterTestTask
         [String]
         $Owners = 'Microsoft'
     )
+
+    # Convert the Main Module path into an absolute path if it is relative
+    if (-not ([System.IO.Path]::IsPathRooted($MainModulePath)))
+    {
+        $MainModulePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
+                                    -ChildPath $MainModulePath
+    }
 
     # Import so we can create zip files
     Add-Type -assemblyname System.IO.Compression.FileSystem
