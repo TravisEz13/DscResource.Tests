@@ -314,7 +314,7 @@ function Start-AppveyorAfterTestTask
     # Create the Nuget Package
     $nugetExePath = Join-Path -Path $env:APPVEYOR_BUILD_FOLDER `
                               -ChildPath 'nuget.exe'
-    & $nugetExePath @('Path',$nuspecPath,'outputdirectory',$env:APPVEYOR_BUILD_FOLDER)
+    & $nugetExePath @('Pack',$nuspecPath,'outputdirectory',$env:APPVEYOR_BUILD_FOLDER)
 
     Write-Verbose -Verbose -Message ((Get-ChildItem -Path $env:APPVEYOR_BUILD_FOLDER -Filter '*.nupkg') | Out-String)
 
