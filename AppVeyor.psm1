@@ -138,6 +138,7 @@ function Start-AppveyorTestScriptTask
         'CodeCoverage'
         {
             # Execute the standard tests including CodeCoverage using Pester.
+            Write-Warning -Message 'Code coverage statistics are being calculated. This will slow the start of the tests while the code matrix is built. Please be patient.'
             $result = Invoke-Pester -OutputFormat NUnitXml `
                                     -OutputFile $testResultsFile `
                                     -PassThru `
