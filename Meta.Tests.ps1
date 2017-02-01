@@ -462,12 +462,12 @@ Describe 'Common Tests - Validate Example Files' -Tag 'Examples' {
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'Markdown' {
 
-    if (Get-Command -Name 'npm.exe' -ErrorAction SilentlyContinue)
+    if (Get-Command -Name 'npm' -ErrorAction SilentlyContinue)
     {
         Write-Warning -Message "NPM is checking Gulp is installed. This may take a few moments."
 
-        $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
-        $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','-g','gulp','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+        $null = Start-Process -FilePath "npm" -ArgumentList @('install','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+        $null = Start-Process -FilePath "npm" -ArgumentList @('install','-g','gulp','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
 
         It "Should not have errors in any markdown files" {
 
