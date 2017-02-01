@@ -35,6 +35,7 @@ if (-not $repoRootPathFound)
         'errors. Please ensure this repository has been cloned using Git.')
     $repoRootPath = $moduleRootFilePath
 }
+$repoName = Split-Path -Path $repoRootPath -Leaf
 
 Describe 'Common Tests - File Formatting' {
     $textFiles = Get-TextFilesList $moduleRootFilePath
@@ -418,7 +419,7 @@ Describe 'Common Tests - Validate Example Files' -Tag 'Examples' {
         if ($env:APPVEYOR -eq $true)
         {
             Copy-item -Path $moduleRootFilePath `
-                      -Destination 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\xNetworking' `
+                      -Destination 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\' `
                       -Recurse
         }
 
@@ -454,8 +455,15 @@ Describe 'Common Tests - Validate Example Files' -Tag 'Examples' {
 
         if ($env:APPVEYOR -eq $true)
         {
-            Remove-item -Path 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\' `
-                        -Recurse -Force -Confirm:$false
+            Remove-item -Path (Join-Path -Path 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\' `
+                                         -ChildPath $repoName) `
+                        -Recurse `
+                        -Force `
+                        -Confirm:$false
+            # Restore the load of the module to ensure future tests have access to it
+            Import-Module -Name (Join-Path -Path $moduleRootFilePath `
+                                           -ChildPath "$repoName.psd1") `
+                          -Global
         }
     }
 }
