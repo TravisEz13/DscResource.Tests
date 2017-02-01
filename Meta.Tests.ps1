@@ -418,8 +418,8 @@ Describe 'Common Tests - Validate Example Files' -Tag 'Examples' {
         if ($env:APPVEYOR -eq $true)
         {
             Copy-item -Path $moduleRootFilePath `
-                        -Destination 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\' `
-                        -Recurse
+                      -Destination 'C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\xNetworking' `
+                      -Recurse
         }
 
         $exampleFiles = Get-ChildItem -Path (Join-Path -Path $moduleRootFilePath -ChildPath 'Examples') -Filter "*.ps1" -Recurse

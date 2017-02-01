@@ -185,7 +185,7 @@ function Start-AppveyorTestScriptTask
                                              -DscTestsPath $dscTestsPath
 
             # Delete the DSCResource.Tests folder because it is not needed
-            Remove-Item -Path $dscTestsPath -Force -Recurse
+            Remove-Item -Path $dscTestsPath -Force -Recurse -ErrorAction SilentlyContinue
             break
         }
     }
