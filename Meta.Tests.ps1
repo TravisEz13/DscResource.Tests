@@ -407,10 +407,11 @@ Describe 'Common Tests - PS Script Analyzer on Resource Files' {
     }
 }
 
-$examplesPath = Join-Path -Path $moduleRootFilePath -ChildPath 'Examples'
-if (Test-Path -Path $examplesPath)
-{
-    Describe 'Common Tests - Validate Example Files' {
+Describe 'Common Tests - Validate Example Files' -Tag 'Examples' {
+
+    $examplesPath = Join-Path -Path $moduleRootFilePath -ChildPath 'Examples'
+    if (Test-Path -Path $examplesPath)
+    {
 
         ## For Appveyor builds copy the module to the system modules directory so it falls
         ## in to a PSModulePath folder and is picked up correctly.
@@ -459,14 +460,14 @@ if (Test-Path -Path $examplesPath)
     }
 }
 
-if (Get-Command -Name 'npm.exe' -ErrorAction SilentlyContinue)
-{
-    Write-Warning -Message "NPM is checking Gulp is installed. This may take a few moments."
+Describe 'Common Tests - Validate Markdown Files' -Tag 'Markdown' {
 
-    $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
-    $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','-g','gulp','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+    if (Get-Command -Name 'npm.exe' -ErrorAction SilentlyContinue)
+    {
+        Write-Warning -Message "NPM is checking Gulp is installed. This may take a few moments."
 
-    Describe 'Common Tests - Validate Markdown Files' {
+        $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+        $null = Start-Process -FilePath "npm.exe" -ArgumentList @('install','-g','gulp','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
 
         It "Should not have errors in any markdown files" {
 
@@ -506,10 +507,10 @@ if (Get-Command -Name 'npm.exe' -ErrorAction SilentlyContinue)
             $mdErrors | Should Be 0
         }
     }
-}
-else
-{
-    Write-Warning -Message ("Unable to run gulp to test markdown files. Please " + `
-                            "be sure that you have installed nodejs and npm in order " + `
-                            "to have this text execute.")
+    else
+    {
+        Write-Warning -Message ("Unable to run gulp to test markdown files. Please " + `
+                                "be sure that you have installed nodejs and npm in order " + `
+                                "to have this text execute.")
+    }
 }
