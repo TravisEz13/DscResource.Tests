@@ -474,8 +474,20 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'Markdown' {
     {
         Write-Warning -Message "NPM is checking Gulp is installed. This may take a few moments."
 
-        $null = Start-Process -FilePath "npm" -ArgumentList @('install','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
-        $null = Start-Process -FilePath "npm" -ArgumentList @('install','-g','gulp','--silent') -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+        $null = Start-Process `
+            -FilePath "npm" `
+            -ArgumentList @('install','--silent') `
+            -Wait `
+            -WorkingDirectory $PSScriptRoot `
+            -PassThru `
+            -NoNewWindow
+        $null = Start-Process `
+            -FilePath "npm" `
+            -ArgumentList @('install','-g','gulp','--silent') `
+            -Wait `
+            -WorkingDirectory $PSScriptRoot `
+            -PassThru `
+            -NoNewWindow
 
         It "Should not have errors in any markdown files" {
 
@@ -486,7 +498,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'Markdown' {
                         'test-mdsyntax',
                         '--silent',
                         '--rootpath',
-                        'C:/Users/Daniel/Source/GitHub/xNetworking',
+                        $repoRootPath,
                         '--dscresourcespath',
                         $dscResourcesFolderFilePath) `
                     -Wait -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
@@ -514,6 +526,23 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'Markdown' {
             Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
             $mdErrors | Should Be 0
         }
+
+        # We're using this tool to clean out the node_modules folder because it gets too long
+        # for PowerShell to remove
+        $null = Start-Process `
+            -FilePath "npm" `
+            -ArgumentList @('install','rimraf','-g','--silent') `
+            -Wait `
+            -WorkingDirectory $PSScriptRoot `
+            -PassThru `
+            -NoNewWindow
+        $null = Start-Process `
+            -FilePath "rimraf" `
+            -ArgumentList @(Join-Path -Path $PSScriptRoot -ChildPath 'node_modules') `
+            -Wait `
+            -WorkingDirectory $PSScriptRoot `
+            -PassThru `
+            -NoNewWindow
     }
     else
     {
