@@ -94,6 +94,18 @@ Function Invoke-AppveyorTest
     Write-Info "End Test Stage, Passed: $script:passedTestsCount ; failed $script:failedTestsCount"
 }
 
+<#
+    .SYNOPSIS
+        Process Test results and produce output.  Returns an object with two properities
+        FailedTestsCount and PassedTestsCount.
+
+    .PARAMETER Results
+        One or more Pester test results
+
+    .EXAMPLE
+        Invoke-ProcessTestResults -Results $results
+
+#>
 function Invoke-ProcessTestResults
 {
     [CmdletBinding()]
@@ -101,7 +113,7 @@ function Invoke-ProcessTestResults
     (
         [Parameter(Mandatory=$true, Position=0)]
         [Object]
-        $results
+        $Results
     )
     $failedTestsCount =0
     $passedTestsCount =0
@@ -127,7 +139,7 @@ function Invoke-ProcessTestResults
             $CodeCoverageCounter++
         }
     }
-    return @{
+    return [PSCustomObject] @{
         failedTestsCount = $failedTestsCount
         passedTestsCount = $passedTestsCount
     }
