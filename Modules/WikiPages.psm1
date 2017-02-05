@@ -29,6 +29,7 @@ This example shows how to generate help for a specific module
 #>
 function New-DscResourceWikiSite
 {
+    [CmdletBinding()]
     param
     (
         [parameter(Mandatory = $true)]
@@ -54,7 +55,7 @@ function New-DscResourceWikiSite
         $descriptionPath = Join-Path -Path $_.DirectoryName -ChildPath "readme.md"
         if (Test-Path -Path $descriptionPath)
         {
-            Write-Progress -Activity "Generating wiki page for $($result.FriendlyName)"
+            Write-Verbose -Message "Generating wiki page for $($result.FriendlyName)"
 
             $output = New-Object System.Text.StringBuilder
             $null = $output.AppendLine('**Parameters**')

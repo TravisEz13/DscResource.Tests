@@ -29,6 +29,7 @@ This example shows how to generate help for a specific module
 #>
 function New-DscResourcePowerShellHelp
 {
+    [CmdletBinding()]
     param
     (
         [parameter(Mandatory = $true)]
