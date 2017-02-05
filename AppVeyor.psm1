@@ -188,6 +188,10 @@ function Invoke-AppveyorTestScriptTask
             Remove-Item -Path $dscTestsPath -Force -Recurse
             break
         }
+        default
+        {
+            throw "An unhandled type '$Type' was specified."
+        }
     }
 
     $webClient = New-Object -TypeName "System.Net.WebClient"

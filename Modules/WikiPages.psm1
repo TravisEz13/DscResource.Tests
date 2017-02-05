@@ -60,7 +60,6 @@ function New-DscResourceWikiSite
             $null = $output.AppendLine('**Parameters**')
             $null = $output.AppendLine('')
             $null = $output.AppendLine('| Parameter | Attribute | DataType | Description | Allowed Values |')
-            $null = $output.AppendLine('')
             $null = $output.AppendLine('| --- | --- | --- | --- | --- |')
             foreach ($property in $result.Attributes)
             {
