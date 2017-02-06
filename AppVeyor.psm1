@@ -169,7 +169,7 @@ function Invoke-AppveyorTestScriptTask
                     )
                 }
             }
-            $result = Invoke-Pester @pesterParameters
+            $results = Invoke-Pester @pesterParameters
             break
         }
         'Harness'
@@ -183,7 +183,7 @@ function Invoke-AppveyorTestScriptTask
 
             # Execute the resource tests as well as the DSCResource.Tests\meta.tests.ps1
             Import-Module -Name $testHarnessPath
-            $result = & $HarnessFunctionName -TestResultsFile $testResultsFile `
+            $results = & $HarnessFunctionName -TestResultsFile $testResultsFile `
                                              -DscTestsPath $dscTestsPath
 
             # Delete the DSCResource.Tests folder because it is not needed
@@ -215,9 +215,9 @@ function Invoke-AppveyorTestScriptTask
     Write-Info -Message 'Done running tests.'
     Write-Info -Message "Test result Type: $($results.GetType().fullname)"
 
-    if ($result.FailedCount -gt 0)
+    if ($results.FailedCount -gt 0)
     {
-        throw "$($result.FailedCount) tests failed."
+        throw "$($results.FailedCount) tests failed."
     }
 
     Write-Info -Message 'Test Script Task Complete.'
