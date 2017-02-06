@@ -244,10 +244,10 @@ deploy_script:
 
 ## Documentation Helper Module
 
-> DscResource.DocumentationHelper.psd1
-> Modules\MofHelper.psm1
-> Modules\PowerShellHelp.psm1
-> Modules\WikiPages.psm1
+> DocumentationHelper\DscResource.DocumentationHelper.psd1
+> DocumentationHelper\MofHelper.psm1
+> DocumentationHelper\PowerShellHelp.psm1
+> DocumentationHelper\WikiPages.psm1
 
 This module is used by some HQRM DSC Resource modules to produce Wiki Content to
 be distributed with the DSC Resource module as well as published in the Wiki
