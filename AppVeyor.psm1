@@ -58,6 +58,8 @@ function Invoke-AppveyorInstallTask
     {
         Invoke-CustomAppveyorInstallTask
     }
+
+    Write-Info -Message 'Install Task Complete.'
 }
 
 <#
@@ -208,15 +210,17 @@ function Invoke-AppveyorTestScriptTask
             -Duration $result.Time.TotalMilliseconds
     }
 
-    Push-TestArtifact -Path $testResultPath
+    Push-TestArtifact -Path $testResultsFile
 
-    Write-Info 'Done running tests.'
-    Write-Info "Test result Type: $($results.gettype().fullname)"
+    Write-Info -Message 'Done running tests.'
+    Write-Info -Message "Test result Type: $($results.GetType().fullname)"
 
     if ($result.FailedCount -gt 0)
     {
         throw "$($result.FailedCount) tests failed."
     }
+
+    Write-Info -Message 'Test Script Task Complete.'
 }
 
 <#
@@ -378,6 +382,8 @@ function Invoke-AppveyorAfterTestTask
     {
         Start-CustomAppveyorAfterTestTask
     }
+
+    Write-Info -Message 'After Test Task Complete.'
 }
 
 <#
