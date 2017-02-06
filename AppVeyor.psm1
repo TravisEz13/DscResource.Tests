@@ -194,9 +194,24 @@ function Invoke-AppveyorTestScriptTask
         }
     }
 
-    $webClient = New-Object -TypeName "System.Net.WebClient"
-    $webClient.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
-        $testResultsFile)
+    foreach($result in $results.TestResult)
+    {
+        [string] $describeName = $result.Describe -replace '\\', '/'
+        [string] $contextName = $result.Context -replace '\\', '/'
+        $componentName = '{0}; Context: {1}' -f $describeName, $contextName
+
+        Add-AppveyorTest `
+            -Name $result.Name `
+            -Framework NUnit `
+            -Filename $componentName `
+            -Outcome $result.Result `
+            -Duration $result.Time.TotalMilliseconds
+    }
+
+    Push-TestArtifact -Path $testResultPath
+
+    Write-Info 'Done running tests.'
+    Write-Info "Test result Type: $($results.gettype().fullname)"
 
     if ($result.FailedCount -gt 0)
     {
@@ -362,6 +377,68 @@ function Invoke-AppveyorAfterTestTask
                           -ErrorAction SilentlyContinue))
     {
         Start-CustomAppveyorAfterTestTask
+    }
+}
+
+<#
+    .SYNOPSIS
+        Writes information to the build log
+
+    .PARAMETER Message
+        The Message to write
+
+    .EXAMPLE
+        Write-Info -Message "Some build info"
+
+#>
+function Write-Info {
+    [CmdletBinding()]
+    param
+    (
+         [Parameter(Mandatory=$true, Position=0)]
+         [string]
+         $Message
+    )
+
+    Write-Host -ForegroundColor Yellow  "[Build Info] [$([datetime]::UtcNow)] $message"
+}
+
+<#
+    .SYNOPSIS
+        Uploads test artifacts
+
+    .PARAMETER Path
+        The path to the test artifacts
+
+    .EXAMPLE
+        Push-TestArtifact -Path .\TestArtifact.log
+
+#>
+function Push-TestArtifact
+{
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]
+        $Path
+    )
+
+    $resolvedPath = (Resolve-Path $Path).ProviderPath
+    if(${env:APPVEYOR_JOB_ID})
+    {
+        <# does not work with Pester 4.0.2
+        $url = "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)"
+        Write-Info -Message "Uploading Test Results: $resolvedPath ; to: $url"
+        (New-Object 'System.Net.WebClient').UploadFile($url, $resolvedPath)
+        #>
+
+        Write-Info -Message "Uploading Test Artifact: $resolvedPath"
+        Push-AppveyorArtifact $resolvedPath
+    }
+    else
+    {
+        Write-Info -Message "Test Artifact: $resolvedPath"
     }
 }
 
